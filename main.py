@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 from pipeline import Regressor
 
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+
 def main() -> None:
     hide_st_styles = '''
         <style>
@@ -104,8 +107,10 @@ def main() -> None:
                     st.markdown('### Train Model')
                     target = st.selectbox('Pick a Target Column', my_model.df.columns)
 
+                    models = [LinearRegression, RandomForestRegressor]
+                    pick_model = st.selectbox('Pick Model', models)
                     my_model.data_split(target)
-                    my_model.train()
+                    my_model.train(pick_model)
                     st.markdown('#### Model is trained')
 
                     st.markdown('### Test Model')
