@@ -61,7 +61,8 @@ def main() -> None:
                             lambda x: str(x).replace(old_val, new_val)
                         )
 
-                st.dataframe(my_model.df, width=10)
+                with st.container():    
+                    st.dataframe(my_model.df, use_container_width=True)
 
             # Statistics Page
             with tabs[2]:
@@ -71,21 +72,31 @@ def main() -> None:
                     'Statistics Table', 
                     ['Describe', 'DataTypes', 'Correlation', 'Value Counts']
                     )
-                if table.lower() == 'describe':
-                    st.dataframe(my_model.df.describe().transpose(), width=10)
 
-                if table.lower() == 'datatypes':
-                    st.dataframe(my_model.df.dtypes, width=10)
+                with st.container():
+                    if table.lower() == 'describe':
+                        st.dataframe(
+                            my_model.df.describe().transpose(), 
+                            use_container_width=True
+                        )
 
-                if table.lower() == 'correlation':
-                    st.dataframe(my_model.df.corr(), width=10)
-
-                if table.lower() == 'value counts':
-                    col = st.selectbox('Column', my_model.df.columns)
-                    st.dataframe(
-                        my_model.df[col].value_counts(), 
-                        width=10
+                    if table.lower() == 'datatypes':
+                        st.dataframe(my_model.df.dtypes, 
+                        use_container_width=True
                     )
+
+                    if table.lower() == 'correlation':
+                        st.dataframe(
+                            my_model.df.corr(), 
+                            use_container_width=True
+                        )
+
+                    if table.lower() == 'value counts':
+                        col = st.selectbox('Column', my_model.df.columns)
+                        st.dataframe(
+                            my_model.df[col].value_counts(), 
+                            use_container_width=True
+                        )
 
             # Training/Testing Page
             try:
