@@ -102,8 +102,9 @@ def main() -> None:
             try:
                 with tabs[3]:
                     st.markdown('### Train Model')
+                    target = st.selectbox('Pick a Target Column', my_model.df.columns)
 
-                    my_model.data_split('score')
+                    my_model.data_split(target)
                     my_model.train()
                     st.markdown('#### Model is trained')
 
