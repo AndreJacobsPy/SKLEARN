@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import load_iris
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix
 
 @dc.dataclass
 class Model:
