@@ -2,10 +2,13 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 plt.style.use('dark_background')
-from pipeline import Regressor
+from pipeline import Regressor, Classifier
 
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+from sklearn.ensemble \
+    import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor,\
+    RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 
 def main() -> None:
     hide_st_styles = '''
@@ -25,10 +28,16 @@ def main() -> None:
     # Data Importing Page
     with tabs[0]:
         data = st.file_uploader('Upload a file')
+        type_ = st.selectbox('Regression or Classification?', ['Regression', 'Classification'])
+
         if data:
             df = pd.read_csv(data)
 
-            my_model = Regressor(df)
+            if type_ == 'Regression':
+                my_model = Regressor(df)
+
+            else:
+                my_model = Classifier(df)
 
     # DataViewer Page
             with tabs[1]:
@@ -101,14 +110,28 @@ def main() -> None:
                             use_container_width=True
                         )
 
-            # Training/Testing Page
+            
             try:
+                # Training/Testing Page
                 with tabs[3]:
                     st.markdown('### Train Model')
                     target = st.selectbox('Pick a Target Column', my_model.df.columns)
 
-                    models = [LinearRegression, RandomForestRegressor]
-                    pick_model = st.selectbox('Pick Model', models)
+                    reg_models = [
+                        LinearRegression, DecisionTreeRegressor, RandomForestRegressor,
+                        AdaBoostRegressor, GradientBoostingRegressor
+                    ]
+                    class_models = [
+                        DecisionTreeClassifier, RandomForestClassifier, AdaBoostClassifier,
+                        GradientBoostingClassifier
+                    ]
+
+                    if type_ == 'Regression':
+                        pick_model = st.selectbox('Pick Model', reg_models)
+
+                    else:
+                        pick_model = st.selectbox('Pick Model', class_models)
+
                     my_model.data_split(target)
                     my_model.train(pick_model)
                     st.markdown('#### Model is trained')
@@ -117,18 +140,18 @@ def main() -> None:
                     my_model.test()
                     st.write(my_model.score)
 
+                # Visualization of Predictions on Test Data
                 with tabs[4]:
                     st.markdown('### Visualize Predictions')
 
-                    fig, ax = plt.subplots()
-                    ax.scatter(
-                        x=my_model.test_, 
-                        y=my_model.test_target
-                    )
-                    ax.plot(
-                        my_model.test_,
-                        my_model.predictions)
-                    st.pyplot(fig)
+                    if my_model.test_.shape[1] == 1 and type_ == 'Regression':
+                        st.pyplot(my_model.plot())
+
+                    elif type_ == 'Classification':
+                        st.pyplot(my_model.confusion_matrix())
+
+                    else:
+                        st.markdown('### Cannot Visualize')
 
             except ValueError:
                 pass
