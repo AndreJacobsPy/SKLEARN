@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import load_iris
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 @dc.dataclass
 class Model:
@@ -42,7 +42,7 @@ class Model:
 class Regressor(Model):
     def train(self, algorithm=LinearRegression) -> None:
         self.model = algorithm()
-        self.model.fit(self.train_.values, self.train_target.values.reshape(-1, 1))
+        self.model.fit(self.train_.values, self.train_target.values)
 
         return None
 
@@ -77,7 +77,7 @@ class Regressor(Model):
 class Classifier(Regressor):
     def train(self, algorithm=GaussianNB) -> None:
         self.model = algorithm()
-        self.model.fit(self.train_.values, self.train_target.values.reshape(-1, 1))
+        self.model.fit(self.train_.values, self.train_target.values)
 
         return None
 
@@ -103,7 +103,6 @@ class Classifier(Regressor):
         return fig
         
 
-
 if __name__ == "__main__":
     data = load_iris()
     target = data.target
@@ -117,7 +116,7 @@ if __name__ == "__main__":
     print(df.head())
 
     my_model = Classifier(df)
-    my_model.data_split('target')
+    my_model.data_split()
     my_model.train()
     my_model.test()
 
